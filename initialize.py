@@ -88,17 +88,28 @@ def generateDockerfile(filelist, flags):
         runcmd += "useradd -m " + filename + " && "
    
     for x in xrange(0, len(filelist)):
-        if x == len(filelist) - 1:
-            runcmd += "echo '" + flags[x] + "' > /home/" + filelist[x] + "/flag.txt" 
-        else:
-            runcmd += "echo '" + flags[x] + "' > /home/" + filelist[x] + "/flag.txt" + " && "
+        runcmd += "echo '" + flags[x] + "' > /home/" + filelist[x] + "/flag.txt" + " && "
     # print runcmd 
+
+    for x in xrange(0, len(filelist)):
+        if TIMEOUT == 0:
+            runsh = "#!/bin/sh\\n#\\nexec 2>/dev/null\\n./%s" % filelist[x]
+        else:
+            runsh = "#!/bin/sh\\n#\\nexec 2>/dev/null\\ntimeout %d ./%s" % (TIMEOUT, filelist[x])
+        if x == len(filelist) - 1:
+            runcmd += "echo '" + runsh + "' > /home/" + filelist[x] + "/run.sh"
+        else:
+            runcmd += "echo '" + runsh + "' > /home/" + filelist[x] + "/run.sh" + " && "
 
     # copy bin
     copybin = ""
     for filename in filelist:
         copybin += "COPY " + PWN_BIN_PATH + "/" + filename  + " /home/" + filename + "/" + filename + "\n"
-        copybin += "COPY ./catflag" + " /home/" + filename + "/bin/sh\n"    
+        copybin += "RUN mkdir /home/" + filename + "/bin && "
+        copybin += "cp /bin/sh" + " /home/" + filename + "/bin && "
+        copybin += "cp /bin/ls" + " /home/" + filename + "/bin && "
+        copybin += "cp /bin/cat" + " /home/" + filename + "/bin && "
+        copybin += "cp /usr/bin/timeout" + " /home/" + filename + "/bin\n"    
     # print copybin
 
     # chown & chmod

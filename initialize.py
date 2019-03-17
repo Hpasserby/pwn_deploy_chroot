@@ -74,7 +74,7 @@ def generateXinetd(filelist):
     uid = 1000
     for filename in filelist:
         port = isExistBeforeGetFlagAndPort(filename, contentBefore)[1]
-        conf += XINETD % (port, str(uid) + ":" + str(uid), filename, filename)
+        conf += XINETD % (port, str(uid) + ":" + str(uid), filename, "run.sh")
         uid = uid + 1
     with open(XINETD_CONF_FILENAME, 'w') as f:
             f.write(conf)
@@ -88,7 +88,7 @@ def generateDockerfile(filelist, flags):
         runcmd += "useradd -m " + filename + " && "
    
     for x in xrange(0, len(filelist)):
-        runcmd += "echo '" + flags[x] + "' > /home/" + filelist[x] + "/flag.txt" + " && "
+        runcmd += "echo '" + flags[x] + "' > /home/" + filelist[x] + "/flag" + " && "
     # print runcmd 
 
     for x in xrange(0, len(filelist)):
@@ -118,9 +118,9 @@ def generateDockerfile(filelist, flags):
         chown_chmod += "chown -R root:" + filelist[x] + " /home/" + filelist[x] + " && "
         chown_chmod += "chmod -R 750 /home/" + filelist[x] + " && "
         if x == len(filelist) - 1:
-            chown_chmod += "chmod 740 /home/" + filelist[x] + "/flag.txt"
+            chown_chmod += "chmod 740 /home/" + filelist[x] + "/flag"
         else:
-            chown_chmod += "chmod 740 /home/" + filelist[x] + "/flag.txt" + " && "
+            chown_chmod += "chmod 740 /home/" + filelist[x] + "/flag" + " && "
     # print chown_chmod
 
     # copy lib,/bin 

@@ -10,7 +10,7 @@ PORT_INFO_FILENAME = "ports.txt"
 PWN_BIN_PATH = "./bin"
 XINETD_CONF_FILENAME = "pwn.xinetd"
 PORT_LISTEN_START_FROM = 10020
-TIMEOUT = 45
+TIMEOUT = 30
 
 XINETD = '''service ctf
 {
